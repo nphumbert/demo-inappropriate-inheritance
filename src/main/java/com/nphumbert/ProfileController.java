@@ -10,19 +10,10 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 @RestController
-public class ProfileController {
+public class ProfileController extends BaseController {
 
     @RequestMapping(value = "/profile", method = RequestMethod.GET)
     public String profile() {
         return "profile: " + hash("profile");
-    }
-
-    private String hash(String value) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            return Arrays.toString(md.digest(value.getBytes("UTF-8")));
-        } catch (IOException | NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
     }
 }
