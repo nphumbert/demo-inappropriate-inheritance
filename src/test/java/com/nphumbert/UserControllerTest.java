@@ -19,11 +19,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration
 public class UserControllerTest {
 
+    public static final String HASH = "hash";
+
+    private class TestableUserController extends UserController {
+        @Override
+        protected String hash(String value) {
+            return HASH;
+        }
+    }
+
     private MockMvc mockMvc;
 
     @Before
     public void setUp() {
-        UserController controller = new UserController();
+        UserController controller = new TestableUserController();
         this.mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
@@ -35,6 +44,6 @@ public class UserControllerTest {
                 .andReturn().getResponse().getContentAsString();
 
         // then
-        assertThat(contentAsString, is("user: [4, -8, -103, 109, -89, 99, -73, -87, 105, -79, 2, -114, -29, 0, 117, 105, -22, -13, -90, 53, 72, 109, -38, -78, 17, -43, 18, -56, 91, -99, -8, -5]"));
+        assertThat(contentAsString, is("user: " + HASH));
     }
 }

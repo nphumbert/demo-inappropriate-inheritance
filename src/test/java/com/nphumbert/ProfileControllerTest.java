@@ -19,11 +19,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration
 public class ProfileControllerTest {
 
+    public static final String HASH = "hash";
+
+    private class TestableProfileController extends ProfileController {
+
+        @Override
+        protected String hash(String value) {
+            return HASH;
+        }
+    }
+
     private MockMvc mockMvc;
 
     @Before
     public void setUp() {
-        ProfileController controller = new ProfileController();
+        ProfileController controller = new TestableProfileController();
         this.mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
@@ -35,6 +45,6 @@ public class ProfileControllerTest {
                 .andReturn().getResponse().getContentAsString();
 
         // then
-        assertThat(contentAsString, is("profile: [25, 0, -22, -74, -64, 40, 72, 61, 113, 38, 89, -98, -26, -11, 13, -32, -46, 121, 7, -75, -58, 95, -87, 5, 36, 88, 11, 75, 15, -104, 82, -80]"));
+        assertThat(contentAsString, is("profile: " + HASH));
     }
 }

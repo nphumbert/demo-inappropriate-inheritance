@@ -5,7 +5,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
-public class BaseController {
+public abstract class BaseController {
     protected String hash(String value) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
