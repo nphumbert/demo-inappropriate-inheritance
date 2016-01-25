@@ -11,6 +11,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -20,21 +22,26 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class UserControllerTest {
 
     private MockMvc mockMvc;
+    private HashProvider hashProvider;
 
     @Before
     public void setUp() {
-        UserController controller = new UserController();
+        hashProvider = mock(HashProvider.class);
+        UserController controller = new UserController(hashProvider);
         this.mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
     @Test
     public void should_get_hash_when_get_user() throws Exception {
+        // given
+        when(hashProvider.hash("user")).thenReturn("hash");
+
         // when
         String contentAsString = mockMvc.perform(get("/user"))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
         // then
-        assertThat(contentAsString, is("user: [4, -8, -103, 109, -89, 99, -73, -87, 105, -79, 2, -114, -29, 0, 117, 105, -22, -13, -90, 53, 72, 109, -38, -78, 17, -43, 18, -56, 91, -99, -8, -5]"));
+        assertThat(contentAsString, is("user: hash"));
     }
 }

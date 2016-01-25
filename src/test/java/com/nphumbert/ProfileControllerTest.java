@@ -11,6 +11,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -20,21 +22,26 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ProfileControllerTest {
 
     private MockMvc mockMvc;
+    private HashProvider hashProvider;
 
     @Before
     public void setUp() {
-        ProfileController controller = new ProfileController();
+        hashProvider = mock(HashProvider.class);
+        ProfileController controller = new ProfileController(hashProvider);
         this.mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
     @Test
     public void should_get_hash_when_get_profile() throws Exception {
+        // given
+        when(hashProvider.hash("profile")).thenReturn("hash");
+
         // when
         String contentAsString = mockMvc.perform(get("/profile"))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
         // then
-        assertThat(contentAsString, is("profile: [25, 0, -22, -74, -64, 40, 72, 61, 113, 38, 89, -98, -26, -11, 13, -32, -46, 121, 7, -75, -58, 95, -87, 5, 36, 88, 11, 75, 15, -104, 82, -80]"));
+        assertThat(contentAsString, is("profile: hash"));
     }
 }
